@@ -70,15 +70,19 @@
    ( "M-s m" . consult-multi-occur)
    ( "M-y" . consult-yank-pop)))
 
-(use-package json-mode)
-(use-package sass-mode)
-(use-package dotenv-mode)
-(use-package gitignore-mode)
-(use-package apache-mode)
-(use-package scss-mode)
-(use-package web-mode)
-(use-package markdown-mode)
-(use-package php-mode)
+(use-package scss-mode
+  :straight
+  (scss-mode
+   :type git
+   :host github
+   :repo "antonj/scss-mode"))
+
+(use-package web-mode
+  :straight
+  (web-mode
+   :type git
+   :host github
+   :repo "fxbois/web-mode"))
 
 ;; overwrite selected text
 (delete-selection-mode t)
