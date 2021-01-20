@@ -439,15 +439,6 @@
     :config
     (which-key-mode))
 
-(use-package wgrep
-  :straight
-  (wgrep
-   :type git
-   :host github
-   :repo "mhayashi1120/Emacs-wgrep")
-  :config
-  (setq wgrep-auto-save-buffer t))
-
 (defun 32-random-letter-string ()
   (interactive)
   (dotimes (_ 32)
