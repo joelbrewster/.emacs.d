@@ -407,6 +407,21 @@
    :repo "Fanael/rainbow-delimiters")
   :hook (prog-mode . rainbow-delimiters-mode))
 
+(use-package rainbow-mode
+  :straight
+  (rainbow-mode
+   :type git
+   :host github
+   :repo "emacsmirror/rainbow-mode")
+  :hook (prog-mode . rainbow-mode))
+
+(use-package reveal-in-osx-finder
+  :straight
+  (reveal-in-osx-finder
+   :type git
+   :host github
+   :repo "kaz-yos/reveal-in-osx-finder"))
+
 (use-package selectrum
   :straight
   (selectrum
