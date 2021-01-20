@@ -199,6 +199,14 @@
    :repo "camdez/goto-last-change.el")
   :bind ("C-c :" . goto-last-change))
 
+(use-package vterm
+  :straight
+  (vterm
+   :type git
+   :host github
+   :repo "akermu/emacs-libvterm")
+  :bind ("C-c t" . vterm))
+
 (use-package lorem-ipsum
   :straight
   (lorem-ipsum
@@ -282,7 +290,7 @@
 				      eww-mode
 				      lisp-interaction-mode
 				      special-mode
-				      eshell-mode)
+				      vterm-mode)
   "List of modes for which `olivetti-mode' should be enabled automatically.")
 
 (defun my/olivetti-mode-maybe (&optional frame)
@@ -470,7 +478,6 @@
 (global-set-key (kbd "M-u") 'upcase-dwim)
 (global-set-key (kbd "M-l") 'downcase-dwim)
 (global-set-key (kbd "M-c") 'capitalize-dwim)
-(global-set-key (kbd "C-c t") 'eshell)
 (global-set-key (kbd "C-c p") 'project-switch-project)
 (global-set-key (kbd "C-c f") 'project-find-file)
 (global-set-key (kbd "C-c g") 'project-find-regexp)
