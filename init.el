@@ -152,7 +152,7 @@
   :config
   (setq doom-themes-enable-bold t)
   (setq doom-themes-enable-italic t)
-  (load-theme 'doom-monokai-pro t)
+  (load-theme 'doom-monokai-spectrum t)
   (doom-themes-org-config))
 
 (use-package emmet-mode
