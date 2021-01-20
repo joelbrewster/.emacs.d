@@ -322,6 +322,9 @@
 (setq org-confirm-babel-evaluate 'nil)
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d!)")))
+(setq org-todo-keyword-faces
+      '(("TODO" . "#F7821B") ("NEXT" . "#FF5157") ("WAIT" . "#FFd400") ("DONE" . "#61BA46"))
+      )
 (setq org-agenda-window-setup 'this-window)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
