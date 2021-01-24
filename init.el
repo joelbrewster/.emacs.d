@@ -56,7 +56,7 @@
    :host github
    :repo "minad/consult")
   :init
-  (fset 'multi-occur #'consult-multi-occur)  
+  (fset 'multi-occur #'consult-multi-occur)
   :bind
   (( "C-c o" . consult-outline)
    ( "C-x b" . consult-buffer)
@@ -78,11 +78,12 @@
    :repo "antonj/scss-mode"))
 
 (use-package web-mode
-  :straight
-  (web-mode
-   :type git
-   :host github
-   :repo "fxbois/web-mode"))
+    :straight
+    (web-mode
+     :type git
+     :host github
+     :repo "fxbois/web-mode"))
+(add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
 
 ;; overwrite selected text
 (delete-selection-mode t)
