@@ -405,13 +405,19 @@
    :repo "prettier/prettier-emacs"))
 (add-hook 'js-mode-hook 'prettier-js-mode)
 
+(use-package project
+  :bind
+  (("C-c p" . project-switch-project)
+   ("C-c f" . project-find-file)
+   ("C-c g" . project-find-regexp)))
+
 (use-package rainbow-delimiters
-  :straight
-  (rainbow-delimiters
-   :type git
-   :host github
-   :repo "Fanael/rainbow-delimiters")
-  :hook (prog-mode . rainbow-delimiters-mode))
+    :straight
+    (rainbow-delimiters
+     :type git
+     :host github
+     :repo "Fanael/rainbow-delimiters"))
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 (use-package rainbow-mode
   :straight
@@ -476,9 +482,6 @@
 (global-set-key (kbd "M-u") 'upcase-dwim)
 (global-set-key (kbd "M-l") 'downcase-dwim)
 (global-set-key (kbd "M-c") 'capitalize-dwim)
-(global-set-key (kbd "C-c p") 'project-switch-project)
-(global-set-key (kbd "C-c f") 'project-find-file)
-(global-set-key (kbd "C-c g") 'project-find-regexp)
 
 (setq gc-cons-threshold 16777216
       gc-cons-percentage 0.1)
