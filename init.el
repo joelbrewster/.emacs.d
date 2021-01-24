@@ -140,6 +140,8 @@
 ;; Change cursor to be a bar
 (setq-default cursor-type 'bar)
 
+(global-set-key (kbd "C-c t") 'eshell)
+
 (add-hook 'dired-mode-hook
 	    (lambda ()
 	      (dired-hide-details-mode)))
@@ -199,14 +201,6 @@
    :host github
    :repo "camdez/goto-last-change.el")
   :bind ("C-c :" . goto-last-change))
-
-(use-package vterm
-  :straight
-  (vterm
-   :type git
-   :host github
-   :repo "akermu/emacs-libvterm")
-  :bind ("C-c t" . vterm))
 
 (use-package lorem-ipsum
   :straight
