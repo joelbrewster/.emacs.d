@@ -3,5 +3,9 @@ bookmarks
 history
 straight
 transient
-/places
 /var/
+/projects
+/places
+/network-security.data
+/eshell/
+/.mc-lists.el
