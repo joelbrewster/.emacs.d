@@ -265,60 +265,23 @@
    :type git
    :host github
    :repo "rnkn/olivetti")
-  :hook
-  (window-configuration-change . my/olivetti-mode-maybe)
   :config
   (setq-default olivetti-body-width 120)
-  (setq olivetti-body-width 120)
-  (olivetti-mode))
-
-(defvar my/olivetti-whitelist-buffers '("*scratch*")
-  "List of buffers for which `olivetti-mode' should be enabled automatically.")
-
-(defvar my/olivetti-whitelist-modes '(Custom-mode
-				      Info-mode
-				      dired-mode
-				      erc-mode
-				      org-mode
-				      magit-mode
-				      elfeed-mode
-				      eww-mode
-				      lisp-interaction-mode
-				      special-mode
-				      vterm-mode)
-  "List of modes for which `olivetti-mode' should be enabled automatically.")
-
-(defun my/olivetti-mode-maybe (&optional frame)
-  "Turn on `olivetti-mode' for lone buffers.
-
-  Doesn't count volatile windows unless the major-mode of their associated buffer
-  is found in `my/olivetti-whitelist-modes' or is derived from one of them.
-  Windows from buffers whose names are found in `my/olivetti-whitelist-buffers'
-  are also considered.
-
-  If FRAME shows exactly one window, turn on `olivetti-mode' for that window.
-  Otherwise, disable it everywhere."
-  (let* ((whitelist-buffers my/olivetti-whitelist-buffers)
-	 (whitelist-modes my/olivetti-whitelist-modes)
-	 (predicate (lambda (window)
-		      (with-selected-window window
-			(or (buffer-file-name)
-			    (member (buffer-name) whitelist-buffers)
-			    (apply 'derived-mode-p whitelist-modes)))))
-	 (windows (seq-filter predicate (window-list frame))))
-    (if (= 1 (length windows))
-	(with-selected-window (car windows)
-	  (olivetti-mode 1))
-      (dolist (window windows)
-	(with-selected-window window
-	  (olivetti-mode -1))))))
+  (setq olivetti-body-width 120))
+(add-hook 'dired-mode-hook 'olivetti-mode)
+(add-hook 'erc-mode-hook 'olivetti-mode)
+(add-hook 'eshell-mode-hook 'olivetti-mode)
+(add-hook 'info-mode-hook 'olivetti-mode)
+(add-hook 'special-mode-hook 'olivetti-mode)
+(add-hook 'text-mode-hook 'olivetti-mode)
+(add-hook 'prog-mode-hook 'olivetti-mode)
 
 (setq org-use-speed-commands t)
 (setq org-confirm-babel-evaluate 'nil)
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d!)")))
 (setq org-todo-keyword-faces
-      '(("TODO" . "#F7821B") ("NEXT" . "#FF5157") ("WAIT" . "#FFd400") ("DONE" . "#61BA46"))
+      '(("TODO" . "#7bd88f") ("NEXT" . "#fd9353") ("WAIT" . "#948ae3") ("DONE" . "#c6c6c6"))
       )
 (setq org-agenda-window-setup 'this-window)
 (global-set-key (kbd "C-c a") 'org-agenda)
