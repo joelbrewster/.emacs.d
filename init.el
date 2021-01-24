@@ -249,6 +249,76 @@
   :config
   (move-text-default-bindings))
 
+(use-package mu4e
+  :bind
+  ("C-c m" . mu4e)
+  :config
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
+  (require 'mu4e)
+  (require 'org-mu4e)
+  (setq mail-user-agent 'mu4e-user-agent)
+  (setq message-kill-buffer-on-exit t)
+  (setq mu4e-attachment-dir "~/Downloads")
+  (setq mu4e-refile-folder "/Archive")
+  (setq mu4e-change-filenames-when-moving t)
+  (setq mu4e-compose-format-flowed t)
+  (setq mu4e-confirm-quit nil)
+  (setq mu4e-context-policy 'pick-first)
+  (setq mu4e-drafts-folder "/Drafts")
+  (setq mu4e-get-mail-command "offlineimap -o")
+  (setq mu4e-hide-index-messages t)
+  (setq mu4e-index-update-in-background t)
+  (setq mu4e-personal-addresses '("hi@joelbrewster.com"))
+  (setq mu4e-root-maildir "~/Maildir")
+  (setq mu4e-sent-folder "/Sent")
+  (setq mu4e-sent-messages-behavior 'sent)
+  (setq mu4e-trash-folder "/Trash")
+  (setq mu4e-update-interval 60)
+  (setq mu4e-view-show-image-max-width: 800)
+  (setq mu4e-view-show-addresses t)
+  (setq mu4e-view-show-images t)
+
+  ;; trash issues
+  (fset 'my-move-to-trash "mTrash")
+  (define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
+  (define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash)
+
+  ;; Add this for viewing HTML emails
+  (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+
+  ;; Visual line breaks when reading mail
+  (add-hook 'mu4e-view-mode-hook 'visual-line-mode)
+
+  ;; Rename files when moving -- needed with mbsync to avoid duplicate UID
+  (setq mu4e-change-filenames-when-moving t)
+
+  (setq mu4e-maildir-shortcuts
+	'(("/INBOX"  . ?i)
+	  ("/Drafts" . ?d)
+	  ("/Sent"   . ?s)
+	  ("/Trash"  . ?t)))
+
+  (setq mu4e-get-mail-command "mbsync -a")
+
+  ;; Sending
+  (require 'smtpmail)
+  (setq message-send-mail-function 'smtpmail-send-it
+	starttls-use-gnutls t
+	smtpmail-starttls-credentials '(("smtp.fastmail.com" 587 nil nil))
+	smtpmail-auth-credentials '(("smtp.fastmail.com" 587 "hi@joelbrewster.com" nil))
+	smtpmail-default-smtp-server "smtp.fastmail.com"
+	smtpmail-smtp-server "smtp.fastmail.com"
+	smtpmail-smtp-service 587)
+
+  (setq user-mail-address "hi@joelbrewster.com"
+	user-full-name    "Joel Brewster")
+
+  (setq mu4e-compose-dont-reply-to-self t)
+
+  ;; Store link to message if in header view, not to header query for org capture
+  (setq mu4e-org-link-query-in-headers-mode nil)
+  )
+
 (use-package multiple-cursors
   :config
   (setq mc/always-run-for-all 1)
@@ -358,6 +428,9 @@
 
 	("c" "Contacts" entry (file "~/org/contacts.org")
 	 "* %?\n  %i\n")
+
+	("e" "Email" entry (file "~/org/life.org")
+	 "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
 	))
 
 (use-package prettier-js
