@@ -49,32 +49,6 @@
 ;; Prevent unwanted runtime builds
 (setq comp-deferred-compilation nil)
 
-;; Modus themes preferences
-;; Modus Vivendi - Dark theme
-(setq
- modus-vivendi-theme-bold-constructs nil
- ;; modus-vivendi-theme-org-blocks 'greyscale
- modus-vivendi-theme-rainbow-headings t
- modus-vivendi-theme-slanted-constructs t
- )
-
-;; Modus Operandi - Light theme
-(setq
- modus-operandi-theme-bold-constructs nil
- ;; modus-operandi-theme-org-blocks 'greyscale
- modus-operandi-theme-rainbow-headings t
- modus-operandi-theme-slanted-constructs t
- )
-
-;; Set theme off light/dark mode on darwin
-
-(add-hook 'ns-system-appearance-change-functions
-	  #'(lambda (appearance)
-	      (mapc #'disable-theme custom-enabled-themes)
-	      (pcase appearance
-		('light (load-theme 'modus-operandi t))
-		('dark (load-theme 'modus-vivendi t)))))
-
 ;; Make startup look cleaner
 (setq-default inhibit-startup-screen t)
 (setq inhibit-startup-echo-area-message t)
