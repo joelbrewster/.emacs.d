@@ -247,7 +247,6 @@
        :host github
        :repo "emacsorphanage/git-gutter-fringe")
       :config
-      (global-git-gutter-mode 1)
       (setq-default fringes-outside-margins t)
       (setq-default left-fringe-width 6)
       (setq-default right-fringe-width 8)
@@ -260,9 +259,49 @@
       (define-fringe-bitmap 'git-gutter-fr:deleted
 	[0 0 0 0 0 0 0 0 0 0 0 0 0 128 192 224 240 248]
 	nil nil 'center)
-      (setq git-gutter:modified-sign " ")
-      (setq git-gutter:added-sign " ")
-      (setq git-gutter:deleted-sign " ")))
+      (setq git-gutter:modified-sign "")
+      (setq git-gutter:added-sign "")
+      (setq git-gutter:deleted-sign "")
+      :init
+      (global-git-gutter-mode 1)))
+
+(use-package gnus
+  :config
+  (setq gnus-select-method '(nnnil ""))
+  (setq gnus-gcc-mark-as-read t)
+  (setq gnus-select-method
+	'(nnimap "main"
+		 (nnimap-address "imap.fastmail.com")
+		 (nnimap-server-port 993)
+		 (nnimap-stream ssl)
+		 (nnimap-authinfo-file "~/.authinfo")))
+  ;; (setq gnus-secondary-select-methods
+  ;; 	'((nntp "news.gwene.org")))
+  (setq smtpmail-smtp-server "smtp.fastmail.com"
+	smtpmail-smtp-service 587)
+  (setq gnus-thread-sort-functions
+	'(gnus-thread-sort-by-number
+	  gnus-thread-sort-by-date))
+  (setq send-mail-function 'smtpmail-send-it)
+  (setq gnus-expert-user t)
+  (setq inhibit-startup-screen t)
+  (setq gnus-use-full-window nil)
+  (setq gnus-read-active-file 'some)
+  (setq gnus-use-dribble-file t)
+  (setq gnus-always-read-dribble-file t)
+  (setq gnus-asynchronous t)
+  (setq gnus-agent-cache t)
+  (setq gnus-agent-expire-all nil)
+  (setq gnus-auto-select-first nil)
+  (setq gnus-article-mode-line-format "%G %S %m")
+  (setq gnus-group-mode-line-format "%%b")
+  (setq gnus-summary-mode-line-format "[%U] %p")
+  (setq gnus-group-sort-function
+	'((gnus-group-sort-by-unread)
+	  (gnus-group-sort-by-alphabet)
+	  (gnus-group-sort-by-rank)))
+  (setq gnus-agent-expire-days 30)
+  :bind (("C-c m" . gnus)))
 
 (use-package goto-last-change
   :straight
