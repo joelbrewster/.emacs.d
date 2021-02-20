@@ -57,6 +57,8 @@
    :repo "minad/consult")
   :init
   (fset 'multi-occur #'consult-multi-occur)
+  :config
+  (require 'consult-selectrum)
   :bind
   (( "C-c o" . consult-outline)
    ( "C-x b" . consult-buffer)
@@ -64,8 +66,7 @@
    ( "C-x 5 b" . consult-buffer-other-frame)
    ( "C-x r x" . consult-register)
    ( "C-x r b" . consult-bookmark)
-   ( "M-s r" . consult-ripgrep)
-   ( "M-s o" . consult-outline)
+   ( "M-s g" . consult-grep)
    ( "M-s l" . consult-line)
    ( "M-s m" . consult-multi-occur)
    ( "M-y" . consult-yank-pop)))
