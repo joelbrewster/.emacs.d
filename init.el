@@ -58,6 +58,37 @@
    ("C-c k" . avy-kill-region)
    ("C-c l" . avy-goto-line)))
 
+(use-package bongo
+  :straight
+  (bongo
+   :type git
+   :host github
+   :repo "dbrock/bongo")
+  :bind ("C-c b" . bongo)
+  :config
+  (setq bongo-default-directory "~/Music")
+  (setq bongo-prefer-library-buffers nil)
+  (setq bongo-insert-whole-directory-trees t)
+  (setq bongo-logo nil)
+  (setq bongo-display-track-icons nil)
+  (setq bongo-display-track-lengths nil)
+  (setq bongo-display-header-icons nil)
+  (setq bongo-display-playback-mode-indicator t)
+  (setq bongo-display-inline-playback-progress t)
+  (setq bongo-join-inserted-tracks nil)
+  (setq bongo-field-separator (propertize " · " 'face 'shadow))
+  (setq bongo-mark-played-tracks t)
+  (setq bongo-header-line-mode nil)
+  (setq bongo-mode-line-indicator-mode nil)
+  (setq bongo-enabled-backends '(vlc))
+  ;; Hide the playlist's banner
+  (define-advice bongo-default-playlist-buffer
+      (:override () contrib/bongo-playlist-no-banner)
+    (with-current-buffer (get-buffer-create bongo-default-playlist-buffer-name)
+      (unless (derived-mode-p 'bongo-playlist-mode)
+	(bongo-playlist-mode))
+      (current-buffer))))
+
 (use-package consult
   :straight
   (consult
