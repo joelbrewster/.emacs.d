@@ -347,7 +347,37 @@
    :type git
    :host github
    :repo "tarsius/minions")
-  :config (minions-mode 1))
+  :init (minions-mode 1))
+
+(use-package modus-themes
+  :straight
+  (modus-themes
+   :type git
+   :host gitlab
+   :repo "protesilaos/modus-themes")
+  :init
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-slanted-constructs t
+	modus-themes-bold-constructs nil)
+
+  ;; Load the theme files before enabling a theme
+  (modus-themes-load-themes)
+  :config
+  (setq modus-themes-vivendi-color-overrides
+	'((bg-main . "#141414")
+	  (bg-dim . "#262626")
+	  (bg-alt . "#1e1e1e")
+	  (bg-active . "#282828")
+	  (bg-inactive . "#262626")))
+  (modus-themes-load-vivendi)
+  :bind ("<f5>" . modus-themes-toggle))
+
+(add-hook 'ns-system-appearance-change-functions
+	  #'(lambda (appearance)
+	      (mapc #'disable-theme custom-enabled-themes)
+	      (pcase appearance
+		('light (load-theme 'modus-operandi t))
+		('dark (load-theme 'modus-vivendi t)))))
 
 (use-package move-text
   :straight
