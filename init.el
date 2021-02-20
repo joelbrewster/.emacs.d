@@ -200,6 +200,45 @@
   (add-hook 'css-mode-hook 'emmet-mode)
   (add-hook 'js-mode-hook 'emmet-mode))
 
+(with-eval-after-load 'eww
+  (setq eww-restore-desktop nil)
+  (setq eww-desktop-remove-duplicates t)
+  (setq eww-header-line-format "%u")
+  (setq eww-search-prefix "https://duckduckgo.com/html/?q=")
+  (setq eww-download-directory "~/Downloads/")
+  (setq eww-suggest-uris
+	'(eww-links-at-point
+	  thing-at-point-url-at-point))
+  (setq eww-bookmarks-directory (concat user-emacs-directory "eww-bookmarks/"))
+  (setq eww-history-limit 150)
+  (setq eww-use-external-browser-for-content-type
+	"\\`\\(video/\\|audio/\\|application/pdf\\)")
+  (setq eww-browse-url-new-window-is-tab nil)
+  (setq eww-form-checkbox-selected-symbol "[X]")
+  (setq eww-form-checkbox-symbol "[ ]")
+
+  (let ((map eww-mode-map))
+    (define-key map (kbd "n") #'next-line)
+    (define-key map (kbd "p") #'previous-line)
+    (define-key map (kbd "f") #'forward-char)
+    (define-key map (kbd "b") #'backward-char)
+    (define-key map (kbd "B") #'eww-back-url)
+    (define-key map (kbd "N") #'eww-next-url)
+    (define-key map (kbd "P") #'eww-previous-url)))
+(add-hook 'eww-after-render-hook 'eww-readable)
+
+(use-package exec-path-from-shell
+    :straight
+    (exec-path-from-shell
+     :type git
+     :host github
+     :repo "purcell/exec-path-from-shell"))
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
+(use-package esup)
+(setq esup-depth 0)
+
 (if (display-graphic-p)
     (use-package git-gutter-fringe
       :straight
