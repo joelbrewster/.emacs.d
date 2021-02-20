@@ -38,6 +38,15 @@
   (global-set-key [remap query-replace-regexp] 'anzu-query-replace-regexp)
   (global-anzu-mode))
 
+(use-package async
+  :straight
+  (async
+   :type git
+   :host github
+   :repo "jwiegley/emacs-async")
+  :config
+  (dired-async-mode 1))
+
 (use-package avy
   :straight
   (avy
