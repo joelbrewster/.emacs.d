@@ -30,9 +30,12 @@
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
 
-(set-face-attribute 'variable-pitch nil :family "SF Mono" :height 130 :weight 'normal)
-(set-face-attribute 'fixed-pitch nil :family "SF Mono" :height 130 :weight 'normal)
-(set-face-attribute 'default nil  :family "SF Mono" :height 130 :weight 'normal)
+(set-face-attribute 'variable-pitch nil :family "PragmataPro Mono" :height 140 :weight 'normal)
+(set-face-attribute 'fixed-pitch nil :family "PragmataPro Mono" :height 140 :weight 'normal)
+(set-face-attribute 'default nil  :family "PragmataPro Mono" :height 140 :weight 'normal)
+;; (set-face-attribute 'variable-pitch nil :family "SF Mono" :height 130 :weight 'normal)
+;; (set-face-attribute 'fixed-pitch nil :family "SF Mono" :height 130 :weight 'normal)
+;; (set-face-attribute 'default nil  :family "SF Mono" :height 130 :weight 'normal)
 
 ;; More spacing around lines
 (setq-default line-spacing 4)
