@@ -95,78 +95,68 @@
      :repo "fxbois/web-mode"))
 (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
 
-;; overwrite selected text
-(delete-selection-mode t)
-
-;; y and n instead of yes and no everywhere
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; Make the backspace properly erase the tab instead of removing 1 space at a time.
-(setq backward-delete-char-untabify-method 'hungry)
-
-;; Kill the whole line
-(setq kill-whole-line t)
-
-;; Normal delete setup
-(normal-erase-is-backspace-mode 0)
-
-;; Set history-length longer
-(savehist-mode 1)
-(setq-default history-length 500)
-
-;; Save place mode
-(save-place-mode +1)
-
-;; Show Keystrokes quicker
-(setq echo-keystrokes 0.1)
-
-;; Visual wrap mode
-(global-visual-line-mode 1)
-
-;; Move Custom-Set-Variables to different file
-(setq custom-file (concat user-emacs-directory "custom.el"))
-
-;; So long for minified files
-(when (require 'so-long nil :noerror)
-  (global-so-long-mode 1))
-
-;; Stop autosave and backups
-(setq make-backup-files nil) ;; stop creating backup~ files
-(setq auto-save-default nil) ;; stop creating #autosave# files
-(setq create-lockfiles nil)  ;; stop creating lockfiles
-
-;; Electric pair mode
-(electric-pair-mode t)
-
-;; Replace selection on insert
-(delete-selection-mode 1)
-
-;; Turn Off Cursor Alarms
-(setq ring-bell-function 'ignore)
-
-;; Enable global auto-revert
-(global-auto-revert-mode t)
-
-;; Change cursor to be a bar
-(setq-default cursor-type 'bar)
-
-(global-set-key (kbd "C-c t") 'eshell)
+(defun eshell-here ()
+  (interactive)
+  (let* ((parent (if (buffer-file-name)
+		     (file-name-directory (buffer-file-name))
+		   default-directory))
+	 (name (car (last (split-string parent "/" t)))))
+    (other-window 1)
+    (eshell "new")
+    (rename-buffer (concat "*eshell: " name "*"))
+    ))
+(global-set-key (kbd "C-c t") 'eshell-here)
 
 (add-hook 'dired-mode-hook
 	    (lambda ()
 	      (dired-hide-details-mode)))
 
-(use-package doom-themes
+(use-package elfeed
   :straight
-  (doom-themes
+  (elfeed
    :type git
    :host github
-   :repo "hlissner/emacs-doom-themes")
+   :repo "skeeto/elfeed")
+  :bind (
+	 ("C-c e" . elfeed)
+	 (:map elfeed-show-mode-map
+	       ("n" . next-line)
+	       ("p" . previous-line)
+	       ("f" . forward-char)
+	       ("b" . backward-char)
+	       ("v" . elfeed-show-next)
+	       ("V" . elfeed-show-prev)
+	       ))
   :config
-  (setq doom-themes-enable-bold t)
-  (setq doom-themes-enable-italic t)
-  (load-theme 'doom-monokai-spectrum t)
-  (doom-themes-org-config))
+  (setf url-queue-timeout 30)
+  ;; (setq elfeed-search-title-max-width 50)
+  ;; (setq elfeed-search-trailing-width 25)
+  (setq elfeed-show-truncate-long-urls t)
+  (setq elfeed-feeds
+	'(("https://www.reddit.com/r/emacs.rss")
+	  ("https://www.reddit.com/r/orgmode.rss")
+	  ("https://hnrss.org/frontpage?link=comments")
+	  ("https://planet.emacslife.com/atom.xml")
+	  ("http://xenodium.com/rss.xml")
+	  ("https://joshwcomeau.com/rss.xml")
+	  ("https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g")
+	  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCduKuJToxWPizJ7I2E6n1kA")
+	  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCshObcm-nLhbu8MY50EZ5Ng")
+	  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ")
+	  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ")
+	  ("https://twitrss.me/twitter_search_to_rss/?term=emacs+org+mode")
+	  )))
+;; Store elfeed entry store link for capture template
+(defun private/org-elfeed-entry-store-link ()
+  (when elfeed-show-entry
+    (let* ((link (elfeed-entry-link elfeed-show-entry))
+	   (title (elfeed-entry-title elfeed-show-entry)))
+      (org-store-link-props
+       :link link
+       :description title)
+      )))
+(add-hook 'org-store-link-functions
+	  'private/org-elfeed-entry-store-link)
 
 (use-package emmet-mode
   :straight
@@ -227,7 +217,7 @@
    :type git
    :host github
    :repo "minad/marginalia")
-  :config
+  :init
   (marginalia-mode +1))
 
 (use-package magit
@@ -256,80 +246,15 @@
    :type git
    :host github
    :repo "emacsfodder/move-text")
-  :config
+  :init
   (move-text-default-bindings))
 
-(use-package mu4e
-  :bind
-  ("C-c m" . mu4e)
-  :config
-  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
-  (require 'mu4e)
-  (require 'org-mu4e)
-  (setq mail-user-agent 'mu4e-user-agent)
-  (setq message-kill-buffer-on-exit t)
-  (setq mu4e-attachment-dir "~/Downloads")
-  (setq mu4e-refile-folder "/Archive")
-  (setq mu4e-change-filenames-when-moving t)
-  (setq mu4e-compose-format-flowed t)
-  (setq mu4e-confirm-quit nil)
-  (setq mu4e-context-policy 'pick-first)
-  (setq mu4e-drafts-folder "/Drafts")
-  (setq mu4e-get-mail-command "offlineimap -o")
-  (setq mu4e-hide-index-messages t)
-  (setq mu4e-index-update-in-background t)
-  (setq mu4e-personal-addresses '("hi@joelbrewster.com"))
-  (setq mu4e-root-maildir "~/Maildir")
-  (setq mu4e-sent-folder "/Sent")
-  (setq mu4e-sent-messages-behavior 'sent)
-  (setq mu4e-trash-folder "/Trash")
-  (setq mu4e-update-interval 60)
-  (setq mu4e-view-show-image-max-width: 800)
-  (setq mu4e-view-show-addresses t)
-  (setq mu4e-view-show-images t)
-
-  ;; trash issues
-  (fset 'my-move-to-trash "mTrash")
-  (define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
-  (define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash)
-
-  ;; Add this for viewing HTML emails
-  (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-
-  ;; Visual line breaks when reading mail
-  (add-hook 'mu4e-view-mode-hook 'visual-line-mode)
-
-  ;; Rename files when moving -- needed with mbsync to avoid duplicate UID
-  (setq mu4e-change-filenames-when-moving t)
-
-  (setq mu4e-maildir-shortcuts
-	'(("/INBOX"  . ?i)
-	  ("/Drafts" . ?d)
-	  ("/Sent"   . ?s)
-	  ("/Trash"  . ?t)))
-
-  (setq mu4e-get-mail-command "mbsync -a")
-
-  ;; Sending
-  (require 'smtpmail)
-  (setq message-send-mail-function 'smtpmail-send-it
-	starttls-use-gnutls t
-	smtpmail-starttls-credentials '(("smtp.fastmail.com" 587 nil nil))
-	smtpmail-auth-credentials '(("smtp.fastmail.com" 587 "hi@joelbrewster.com" nil))
-	smtpmail-default-smtp-server "smtp.fastmail.com"
-	smtpmail-smtp-server "smtp.fastmail.com"
-	smtpmail-smtp-service 587)
-
-  (setq user-mail-address "hi@joelbrewster.com"
-	user-full-name    "Joel Brewster")
-
-  (setq mu4e-compose-dont-reply-to-self t)
-
-  ;; Store link to message if in header view, not to header query for org capture
-  (setq mu4e-org-link-query-in-headers-mode nil)
-  )
-
 (use-package multiple-cursors
+  :straight
+  (multiple-cursors
+   :type git
+   :host github
+   :repo "magnars/multiple-cursors.el")
   :config
   (setq mc/always-run-for-all 1)
   :bind
@@ -489,6 +414,7 @@
   :config
   (setq selectrum-refine-candidates-function #'orderless-filter)
   (setq selectrum-highlight-candidates-function #'orderless-highlight-matches)
+  :init
   (selectrum-mode +1)
   (global-set-key (kbd "C-x C-z") #'selectrum-repeat))
 
