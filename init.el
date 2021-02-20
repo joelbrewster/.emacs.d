@@ -425,25 +425,46 @@
   :config
   (setq-default olivetti-body-width 120)
   (setq olivetti-body-width 120))
-(add-hook 'dired-mode-hook 'olivetti-mode)
-(add-hook 'erc-mode-hook 'olivetti-mode)
-(add-hook 'eshell-mode-hook 'olivetti-mode)
-(add-hook 'info-mode-hook 'olivetti-mode)
-(add-hook 'special-mode-hook 'olivetti-mode)
-(add-hook 'text-mode-hook 'olivetti-mode)
-(add-hook 'prog-mode-hook 'olivetti-mode)
+;; (add-hook 'dired-mode-hook 'olivetti-mode)
+;; (add-hook 'erc-mode-hook 'olivetti-mode)
+;; (add-hook 'eshell-mode-hook 'olivetti-mode)
+;; (add-hook 'info-mode-hook 'olivetti-mode)
+;; (add-hook 'special-mode-hook 'olivetti-mode)
+;; (add-hook 'text-mode-hook 'olivetti-mode)
+;; (add-hook 'prog-mode-hook 'olivetti-mode)
+
+(use-package openwith
+  :straight
+  (openwith
+   :type git
+   :host github
+   :repo "garberw/openwith")
+  :config
+  (setq openwith-associations
+	(list
+	 ;; (list (openwith-make-extension-regexp
+	 ;; 	'("dmg" "doc" "jpg" "jpeg" "png" "svg"))
+	 ;;       "open"
+	 ;;       '(file))
+	 (list (openwith-make-extension-regexp
+		'("mp4" "mp3" "webm" "avi" "flv" "mov"))
+	       "open"
+	       '("-a" "vlc" file))
+	 ))
+  (openwith-mode +1))
+
+;; (require 'org-habit)
+;; (setq org-habit-graph-column 80)
 
 (setq org-use-speed-commands t)
 (setq org-confirm-babel-evaluate 'nil)
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d!)")))
-(setq org-todo-keyword-faces
-      '(("TODO" . "#7bd88f") ("NEXT" . "#fd9353") ("WAIT" . "#948ae3") ("DONE" . "#c6c6c6"))
-      )
-(setq org-agenda-window-setup 'this-window)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
+;; (setq org-todo-keyword-faces
+;;       '(("TODO" . "#2BC940") ("NEXT" . "#FF5F58") ("WAIT" . "##FEBC2E") ("DONE" . "#5E5E5E"))
+;;       )
 
+(setq org-agenda-window-setup 'this-window)
 (setq org-agenda-start-on-weekday nil)
 (setq org-agenda-inhibit-startup t)
 (setq org-agenda-skip-unavailable-files t)
@@ -484,12 +505,18 @@
       '(("d" "Dashboard"
 	 ((agenda "" ((org-agenda-span 5)(org-deadline-warning-days 7)))
 	  (todo "NEXT"((org-agenda-overriding-header "Next Tasks")))))
+	("y" "Daily habits"
+	 ((agenda ""))
+	 ((org-agenda-show-log t)
+	  (org-agenda-ndays 7)
+	  (org-agenda-log-mode-items '(state))
+	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'notregexp ":DAILY:"))))
 	("h" tags "+@home")
 	("m" tags "+@mac")
 	("p" tags "+@phone")
 	("e" tags "+@errand")
 	("n" "Next Tasks" ((todo "NEXT" ((org-agenda-overriding-header "Next Tasks")(org-agenda-files '("~/org/life.org"))))))
-	("wn" "Next Work Tasks" ((todo "NEXT" ((org-agenda-overriding-header "Next Tasks")(org-agenda-files '("~/org/work.org"))))))
+	("w" "Next Work Tasks" ((todo "NEXT" ((org-agenda-overriding-header "Next Tasks")(org-agenda-files '("~/org/work.org"))))))
 	))
 
 (setq org-agenda-files (list "~/org/inbox.org"
@@ -516,9 +543,26 @@
 	("c" "Contacts" entry (file "~/org/contacts.org")
 	 "* %?\n  %i\n")
 
-	("e" "Email" entry (file "~/org/life.org")
+	("r" "Resource" entry (file "~/org/life.org")
 	 "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
 	))
+
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(with-eval-after-load 'org
+  (bind-key "C-c C-f" #'browse-url-firefox org-mode-map))
+
+(use-package org-download
+  :straight
+  (org-download
+   :type git
+   :host github
+   :repo "abo-abo/org-download")
+  :init
+  (org-download-enable)
+  :config
+  (setq org-download-display-inline-images nil)
+  (setq org-download-method 'attach))
 
 (use-package prettier-js
   :straight
@@ -582,13 +626,93 @@
   (selectrum-prescient-mode +1))
 
 (use-package which-key
-:straight
-(which-key
- :type git
- :host github
- :repo "justbur/emacs-which-key")
-    :config
-    (which-key-mode))
+  :straight
+  (which-key
+   :type git
+   :host github
+   :repo "justbur/emacs-which-key")
+  :init
+  (which-key-mode))
+
+;; overwrite selected text
+(delete-selection-mode t)
+
+;; y and n instead of yes and no everywhere
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; Make the backspace properly erase the tab instead of removing 1 space at a time.
+(setq backward-delete-char-untabify-method 'hungry)
+
+;; Kill the whole line
+(setq kill-whole-line t)
+
+;; Normal delete setup
+(normal-erase-is-backspace-mode 0)
+
+;; Set history-length longer
+(savehist-mode 1)
+(setq-default history-length 500)
+
+;; Save place mode
+(save-place-mode +1)
+
+;; Show Keystrokes quicker
+(setq echo-keystrokes 0.1)
+
+;; Visual wrap mode
+;; (global-visual-line-mode 1)
+
+;; Move Custom-Set-Variables to different file
+(setq custom-file (concat user-emacs-directory "custom.el"))
+
+;; So long for minified files
+(when (require 'so-long nil :noerror)
+  (global-so-long-mode 1))
+
+;; Stop autosave and backups
+(setq make-backup-files nil) ;; stop creating backup~ files
+(setq auto-save-default nil) ;; stop creating #autosave# files
+(setq create-lockfiles nil)  ;; stop creating lockfiles
+
+;; Electric pair mode
+(electric-pair-mode t)
+
+;; Replace selection on insert
+(delete-selection-mode 1)
+
+;; Turn Off Cursor Alarms
+(setq ring-bell-function 'ignore)
+
+;; Enable global auto-revert
+(global-auto-revert-mode t)
+
+;; Change cursor to be a bar
+(setq-default cursor-type 'bar)
+
+;; Firefox path
+(setq browse-url-firefox-program "/Applications/Firefox.app/Contents/MacOS/firefox-bin")
+
+;; Window divider mode
+(setq window-divider-default-right-width 1)
+(setq window-divider-default-bottom-width 1)
+(setq window-divider-default-places 'right-only)
+(add-hook 'after-init-hook #'window-divider-mode)
+
+;; startup maximised
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+;; Don't ask about opening large files
+(setq large-file-warning-threshold nil)
+
+;; ;; scroll stuff
+;; (pixel-scroll-mode)
+;; ;; Never go back to the old scrolling behaviour.
+;; (setq pixel-dead-time 0)
+;; ;; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
+;; (setq pixel-resolution-fine-flag t)
+;; ;; Distance in pixel-resolution to scroll each mouse wheel event.
+;; (setq mouse-wheel-scroll-amount '(2)) 
+;; (setq mouse-wheel-progressive-speed nil)
 
 (defun 32-random-letter-string ()
   (interactive)
@@ -597,15 +721,67 @@
      (let ((x (random 36)))
        (if (< x 10) (+ x ?0) (+ x (- ?a 10)))))))
 
+(defun youtube-dl ()
+  (interactive)
+  (let* ((str (current-kill 0))
+	 (parent (if (buffer-file-name)
+		     (file-name-directory (buffer-file-name))
+		   default-directory))
+	 (name (car (last (split-string parent "/" t)))))
+    (other-window 1)
+    (eshell "new")
+    (rename-buffer (concat "*eshell: " str "*"))
+    (insert (concat "cd ~/Downloads && youtube-dl " str "\n"))
+    (eshell-send-input)))
+
+(defun streamvideos ()
+  (interactive)
+  (let* ((str (current-kill 0))
+	 (parent (if (buffer-file-name)
+		     (file-name-directory (buffer-file-name))
+		   default-directory))
+	 (name (car (last (split-string parent "/" t)))))
+    (other-window 1)
+    (eshell "new")
+    (rename-buffer (concat "*eshell: " str "*"))
+    (insert (concat "streamlink " str " best \n vlc \n"))
+    (eshell-send-input)))
+
 (progn
   (setq mac-option-modifier 'meta)
   (setq mac-command-modifier 'super)
   (global-unset-key (kbd "M-<down-mouse-1>"))
   (global-unset-key (kbd "M-<down-mouse-2>")))
 
-(global-set-key (kbd "M-u") 'upcase-dwim)
-(global-set-key (kbd "M-l") 'downcase-dwim)
-(global-set-key (kbd "M-c") 'capitalize-dwim)
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+(bind-keys
+ ("s-n" . make-frame-command)
+ ("s-m" . iconify-frame)
+ ("s-s" . save-buffer)
+ ("s-o" . find-file)
+ ("s-w" . delete-frame)
+ ("s-q" . save-buffers-kill-terminal)
+ ("s-a" . mark-whole-buffer)
+ ("s-z" . undo-only) ;; Why no redo? Read up on it.
+ ("s-x" . kill-region)
+ ("s-c" . kill-ring-save)
+ ("s-v" . yank)
+ ("s-<up>" . beginning-of-buffer)
+ ("s-<down>" . end-of-buffer)
+ ("s-<left>" . beginning-of-visual-line)
+ ("s-<right>" . end-of-visual-line)
+ ("s-b" . switch-to-buffer)
+ ("s-B" . ibuffer)
+ ("s-[" . previous-buffer)
+ ("s-]" . next-buffer)
+ ("s-k" . kill-this-buffer)
+ ("s-P" . project-switch-project)
+ ("M-u" . upcase-dwim)
+ ("M-l" . downcase-dwim)
+ ("M-c" . capitalize-dwim)
+ ("C-c C-f" . browse-url-firefox)
+ ("C-c w" . eww)
+ )
 
 (setq gc-cons-threshold 16777216
       gc-cons-percentage 0.1)
