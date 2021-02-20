@@ -403,6 +403,19 @@
   ("C-<" . mc/mark-previous-like-this)
   ("C-c C-<" . mc/mark-all-like-this)))
 
+(use-package nyan-mode
+  :straight
+  (nyan-mode
+   :type git
+   :host github
+   :repo "TeMPOraL/nyan-mode")
+  :config
+  (setq nyan-minimum-window-width 160)
+  (setq nyan-animate-nyancat t)
+  :init
+  (nyan-mode 1))
+(add-hook 'after-init-hook #'nyan-start-animation)
+
 (use-package olivetti
   :straight
   (olivetti
